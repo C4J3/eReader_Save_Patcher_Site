@@ -63,6 +63,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 var cHeaderValid = readRange(cHeaderLoStart, cHeaderLoEnd);
                 if (cHeaderValid != "Card-E Reader 2001") {
                     document.getElementById(outHeaderID).innerText = 'Invalid calibration Data.';
+                    document.getElementById(outDataID).innerText = '';
+
                 } else {
                     document.getElementById(outHeaderID).innerText = 'Calibration data looks good!';
 
