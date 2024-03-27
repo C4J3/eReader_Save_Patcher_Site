@@ -1,31 +1,32 @@
 <!DOCTYPE html>
-<html lange="en">
-    <head>
-        <title>GBA e-Reader Save Patcher</title>
-        <meta http-equiv="content-Type" content="text/html; charset=UTF-8"/>
-        <meta name="description" content="A tool to copy parts of GBA e-Reader save files to others. Currently only supports copying calibration data from one save to another."/>
-        <meta name="keywords" content="bin,sav,save,fla,patcher,online,html5,web,patch,"/>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
-        <link rel="stylesheet" href="style.css">
-        <script src="scripts.js"></script>
-    </head>
-<body><div id="column">
+<html lang="en">
 
-<header>Nintendo e-Reader Save Patcher</header>
+<head>
+    <title>GBA e-Reader Save Patcher</title>
+    <meta http-equiv="content-Type" content="text/html; charset=UTF-8" />
+    <meta name="description"
+        content="A tool to copy parts of GBA e-Reader save files to others. Currently only supports copying calibration data from one save to another." />
+    <meta name="keywords" content="bin,sav,save,fla,patcher,online,html5,web,patch," />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <link rel="stylesheet" href="style.css">
+    <script src="scripts.js"></script>
+</head>
 
-<div id="caliFile">
-    <div id="caliInput">
-        <label for="calif">Calibration File:</label>
-        <input type="file" id="calif" accept=".sav, .bin, .fla" single>
-        <button id="test" onclick="califThinger()">Test</button>
+<body>
+    <div id="column">
+        <header>Nintendo e-Reader Save Patcher</header>
+        <div id="caliFile">
+            <div id="caliInput">
+                <label for="calif">Calibration File:</label>
+                <input type="file" id="calif" accept=".sav, .bin, .fla" single>
+            </div>
+            <div id="caliOutput">
+                <div id="caliCardName">Last Scanned Card:</div>
+                <div id="caliHeaderValid">Calibration Data:</div>
+                <div id="caliCaliData">Calibration Data on Save:</div>
+            </div>
+        </div>
     </div>
-    <div id="caliOutput">
-        <div id="caliCardName">Last Scanned Card:</div>
-        <div id="caliHeaderValid">Header Valid?:</div>
-        <div id="caliCaliData">Calibration Data on Save:</div>
-    </div>
-</div>
-
 </body>
 
 </html>
