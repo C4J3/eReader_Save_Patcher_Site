@@ -7,28 +7,22 @@
         <meta name="keywords" content="bin,sav,save,fla,patcher,online,html5,web,patch,"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
         <link rel="stylesheet" href="style.css">
+        <script src="scripts.js"></script>
     </head>
 <body><div id="column">
 
 <header>Nintendo e-Reader Save Patcher</header>
 
-<div id = "file_inputs">
-    <label for="calif">Calibration File:</label>
-    <input type="file" id="calif" accept=".sav, .bin, .fla" single>
-    <label for="inf">Input File:</label>
-    <input type="file" id="inf" accept=".sav, .bin, .fla" single>
-    <label for="outf">Output File Name:</label>
-    <input type="text" id="outf">
-    <input type="submit" id="outf">
-</div>
-
-<div id="file data">
-
-    <input id="patch" type="button" value="Patch" onclick="patcher();"/>
-</div>
-
-<div id="output">
-    <input id="downloader" type="button" value="Download {outputName}" onclick="downloadProduct();"/>
+<div id="caliFile">
+    <div id="caliInput">
+        <label for="calif">Calibration File:</label>
+        <input type="file" id="calif" accept=".sav, .bin, .fla" single>
+        <button id="test" onclick="test()">Test</button>
+    </div>
+    <div id="caliOutput">
+        <div id="caliCardName">Last Scanned Card:</div>
+        <div id="caliCaliData">Calibration Data on Save:</div>
+    </div>
 </div>
 
 </body>
