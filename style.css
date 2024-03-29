@@ -1,8 +1,12 @@
 body {
 
-    background-color:  #404040;
+  background-color: #404040;
 }
 
 #file_inputs {
-    font-family: 'Comic Sans MS'
+  font-family: 'Comic Sans MS'
+}
+
+.grid-item {
+  display: inline-flex;
 }
