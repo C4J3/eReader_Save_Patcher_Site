@@ -6,3 +6,7 @@ body {
 #file_inputs {
     font-family: 'Comic Sans MS'
 }
+
+.grid-item {
+  display: inline-flex;
+}

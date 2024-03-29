@@ -15,18 +15,20 @@
 <body>
     <div id="column">
         <header>Nintendo e-Reader Save Patcher</header>
-        <div id="caliFile">
-            <div id="caliInput">
-                <label for="calif">Calibration File:</label>
-                <input type="file" id="calif" class="inFiles" accept=".sav, .bin, .fla" single>
-            </div>
-            <div id="caliOutput">
-                <div id="caliCardName">Last Scanned Card:</div>
-                <div id="caliHeaderValid">Calibration Data:</div>
-                <div id="caliCaliData">Calibration Data on Save:</div>
+        <div id="files" class="grid-container">
+            <div id="caliFile" class="grid-item">
+                <div id="caliInput">
+                    <label for="calif">Calibration File:</label>
+                    <input type="file" id="calif" class="inFiles" accept=".sav, .bin, .fla" single>
+                </div>
+                <div id="caliOutput">
+                    <div id="caliCardName">Last Scanned Card:</div>
+                    <div id="caliHeaderValid">Calibration Data:</div>
+                    <div id="caliCaliData">Calibration Data on Save:</div>
+                </div>
             </div>
         </div>
-        <div id="inputFile">
+        <div id="inputFile" class="grid-item">
             <div id="inputInput">
                 <label for="inputf">Input File:</label>
                 <input type="file" id="inputf" class="inFiles" accept=".sav, .bin, .fla" single>
@@ -48,6 +50,9 @@
                 <div id="outputCaliData">Temp</div>
                 <div id="outputFile">Temp</div>
             </div>
+    </div>
+    <div id="Temp">
+        <button id="test">Update</button>
     </div>
 </body>
 
