@@ -1,13 +1,14 @@
 document.addEventListener('DOMContentLoaded', function () {
 
-    var cardNameAdr = [0x10004, 0x1001F];
-    var caliHeaderLoAdr = [0xD000, 0xD011];
-    var caliDataLoAdr = [0xD012, 0xD04F];
-    var caliHeaderHiAdr = [0xE000, 0xE011];
-    var caliDataHiAdr = [0xE012, 0xE04F];
-    var fileTop = [0x0, 0xCFFF];
-    var fileBottom = [0xE050, 0x20000];
-    var caliHead = new Uint8Array([0x43, 0x61, 0x72, 0x64, 0x2D, 0x45, 0x20, 0x52, 0x65, 0x61, 0x64, 0x65, 0x72, 0x20, 0x32, 0x30, 0x30, 0x31]);
+    const cardNameAdr = [0x10004, 0x1001F];
+    const caliHeaderLoAdr = [0xD000, 0xD011];
+    const caliDataLoAdr = [0xD012, 0xD04F];
+    const caliHeaderHiAdr = [0xE000, 0xE011];
+    const caliDataHiAdr = [0xE012, 0xE04F];
+    const fileTop = [0x0, 0xCFFF];
+    const fileBottom = [0xE060, 0x20000];
+    const caliHead = new Uint8Array([0x43, 0x61, 0x72, 0x64, 0x2D, 0x45, 0x20, 0x52, 0x65, 0x61, 0x64, 0x65, 0x72, 0x20, 0x32, 0x30, 0x30, 0x31]);
+    const caliBadFlag = new Uint8Array([0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]);
 
     var fileName = new String("default");
     //var completeCali = caliHead.concat(function())
@@ -18,9 +19,12 @@ document.addEventListener('DOMContentLoaded', function () {
     var outputFile = document.getElementById('outf');
 
 // 4 arrays. File top, calLow to begin of calHi, CalHi, Rest of file.
-
-    function submitName(name) {
-        return name
+    function namer() {
+        function submitName() {
+            var fileName = outputFile.value;
+            console.log("File name submitted: "+fileName);
+            return fileName;
+        }
     }
 
     function arrayToHexFormatted(uint8Array) {
@@ -51,20 +55,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function caliBuilder(caliArray) {
         var dataSlice = new Uint8Array(slicer(caliArray, caliDataLoAdr));
-        var calibrationBlockSingle = new Uint8Array([...caliHead, ...dataSlice]);
-        const blank = new Uint8Array(Array(4016).fill(null));
+        var calibrationBlockSingle = new Uint8Array([...caliHead, ...dataSlice, ...caliBadFlag]);
+        const blank = new Uint8Array(Array(4000).fill(null));
         var calibrationBlockFull = new Uint8Array([...calibrationBlockSingle, ...blank, ...calibrationBlockSingle]);
+        console.log(arrayToHexFormatted(calibrationBlockFull));
 
         return calibrationBlockFull
-    }
-
-    function submitName() {
-        const filename = outputFile.value.trim().append('.bin');
-        if (!filename) {
-            alert('Please enter a filename.');
-            return;
-        };
-        return filename
     }
 
     function patcher(caliFile, inputFile) {
@@ -150,7 +146,7 @@ document.addEventListener('DOMContentLoaded', function () {
         try {
             var calibrationArray = await saveBuilder(calibrationFile); // Wait for the promise to resolve
             var inputArray = await saveBuilder(inputFile);
-            fileOut(patcher(calibrationArray, inputArray), namer())
+            fileOut(patcher(calibrationArray, inputArray), 'CARDE READER [PSAE01].sav')
         } catch (error) {
             console.error('Error occurred:', error);
         }
