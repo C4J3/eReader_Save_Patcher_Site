@@ -10,3 +10,7 @@ body {
 .grid-item {
   display: inline-flex;
 }
+
+.hexData {
+  font-family: 'Roboto Mono', monospace;
+}
