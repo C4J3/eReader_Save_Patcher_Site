@@ -4,7 +4,8 @@
 <head>
     <title>GBA e-Reader Save Patcher</title>
     <meta http-equiv="content-Type" content="text/html; charset=UTF-8" />
-    <meta name="description" content="A tool to copy parts of GBA e-Reader save files to others. Currently only supports copying inputbration data from one save to another." />
+    <meta name="description"
+        content="A tool to copy parts of GBA e-Reader save files to others. Currently only supports copying inputbration data from one save to another." />
     <meta name="keywords" content="bin,sav,save,fla,patcher,online,html5,web,patch" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
     <link rel="stylesheet" href="style.css">
@@ -20,12 +21,12 @@
                 <input type="file" id="calif" class="inFiles" accept=".sav, .bin, .fla" single>
             </div>
             <div id="caliOutput">
-                <div class="dataTitle" id="cardNameCali">Last Scanned Card:</div>
-                <div id="caliCardName">Null</div>
-                <div class="dataTitle" id="headerValidCali">Calibration Data:</div>
-                <div id="caliHeaderValid">Null</div>
+                <div class="dataTitle" id="cardNameCali">Saved e-Card:</div>
+                <div class="dataValue" id="caliCardName">Load a save.</div>
+                <div class="dataTitle" id="headerValidCali">Valid Calibration Data?:</div>
+                <div class="dataValue" id="caliHeaderValid">Load a save.</div>
                 <div class="dataTitle" id="CaliDatacali">Calibration Data on Save:</div>
-                <div id="caliCaliData" class="hexData">Null</div>
+                <div class="dataValue" id="caliCaliData" class="hexData">Load a save.</div>
             </div>
         </div>
         <div id="inputFile" class="grid-item">
@@ -34,32 +35,33 @@
                 <input type="file" id="inputf" class="inFiles" accept=".sav, .bin, .fla" single>
             </div>
             <div id="inputOutput">
-                <div class="dataTitle" id="cardNameInput">Last Scanned Card:</div>
-                <div id="inputCardName">Null</div>
-                <div class="dataTitle" id="headerValidInput">Calibration Data:</div>
-                <div id="inputHeaderValid">Null</div>
+                <div class="dataTitle" id="cardNameInput">Saved e-Card:</div>
+                <div class="dataValue" id="inputCardName">Null</div>
+                <div class="dataTitle" id="headerValidInput">Valid Calibration Data?</div>
+                <div class="dataValue" id="inputHeaderValid">Null</div>
                 <div class="dataTitle" id="InputDatainput">Calibration Data on Save:</div>
-                <div id="inputCaliData" class="hexData">Null</div>
+                <div class="dataValue" id="inputCaliData" class="hexData">Null</div>
             </div>
         </div>
         <div id="outFile" class="grid-item">
+            <div id="outputOutput">
+                <div class="dataTitle" id="cardNameOutput">Saved e-Card:</div>
+                <div class="dataValue" id="outputCardName">Press Patch.</div>
+                <div class="dataTitle" id="headerValidOutput">Valid Calibration Data?</div>
+                <div class="dataValue" id="outputHeaderValid">Press Patch.</div>
+                <div class="dataTitle" id="OutputDataoutput">Calibration Data on Save:</div>
+                <div class="dataValue" id="outputOutputData">Press Patch.</div>
+            </div>
             <div id="outputInput">
                 <label for="outf">Output File Name:</label>
                 <input type="text" id="outf" oninput="checkOutfileInput()">
                 <button id="submitButton" disabled>Submit</button>
             </div>
-            <div id="outputOutput">
-                <div class="dataTitle" id="cardNameOutput">Last Scanned Card:</div>
-                <div id="outputCardName">Null</div>
-                <div class="dataTitle" id="headerValidOutput">Calibration Data:</div>
-                <div id="outputHeaderValid">Null</div>
-                <div class="dataTitle" id="OutputDataoutput">Calibration Data on Save:</div>
-                <div id="outputOutputData" class="hexData">Null</div>
-            </div>
         </div>
         <div id="Temp">
-            <button id="patch">Patch</button>
-            <button id="download">Download File</button>
+            <button id="patch" disabled>Patch</button>
+            <button id="downloadButton" disabled>Download File</button>
+            <button id="customPrint">Test</button>
         </div>
     </div>
 </body>

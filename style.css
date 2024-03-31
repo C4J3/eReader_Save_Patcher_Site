@@ -1,6 +1,6 @@
 body {
 
-  background-color: #404040;
+  background-color: #1a1a1a;
 }
 
 #file_inputs {
@@ -8,9 +8,13 @@ body {
 }
 
 .grid-item {
-  display: inline-flex;
+  width: 300px;
+  border: 15px #ff0000;
+  padding: 30px;
+  margin: 20px;
+  background-color: #424242;
 }
 
-.hexData {
+.dataValue {
   font-family: 'Roboto Mono', monospace;
 }

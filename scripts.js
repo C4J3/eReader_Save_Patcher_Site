@@ -10,14 +10,22 @@ document.addEventListener('DOMContentLoaded', function () {
     const caliHead = new Uint8Array([0x43, 0x61, 0x72, 0x64, 0x2D, 0x45, 0x20, 0x52, 0x65, 0x61, 0x64, 0x65, 0x72, 0x20, 0x32, 0x30, 0x30, 0x31]);
     const caliBadFlag = new Uint8Array([0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]);
 
-    var patchedArray = new Uint8Array();
-    var fileName = new String("default");
+    var patchedArray = new Uint8Array(null);
+    var caliArray = new Uint8Array(null);
+    var inputArray = new Uint8Array(null);
+    var fileName = new String(null);
     var enc = new TextDecoder("utf-8")
+
+    var filesSelected = {
+        'calif': false,
+        'inputf': false
+    };
 
     const calibrationFile = document.getElementById('calif');
     const inputFile = document.getElementById('inputf');
     const outputFile = document.getElementById('outf');
     const submitButton = document.getElementById('submitButton')
+    const downloadButton = document.getElementById('downloadButton')
 
     function namer() {
         const fileNameInput = outputFile;
@@ -33,6 +41,14 @@ document.addEventListener('DOMContentLoaded', function () {
         } else {
             // Disable the submit button
             submitButton.disabled = true;
+        }
+    }
+
+    function enableDownload() {
+        if (fileName !== null && fileName.trim() !== '' && patchedArray !== null) {
+            downloadButton.disabled = false;
+        } else {
+            downloadButton.disabled = true;
         }
     }
 
@@ -62,6 +78,15 @@ document.addEventListener('DOMContentLoaded', function () {
         }, true);
     }
 
+    function checkPatchButton() {
+        const patchButton = document.getElementById('patch');
+        if (filesSelected['calif'] && filesSelected['inputf']) {
+            patchButton.disabled = false; // Enable the patch button
+        } else {
+            patchButton.disabled = true; // Disable the patch button
+        }
+    }
+
     function caliBuilder(caliArray) {
         var dataSlice = new Uint8Array(slicer(caliArray, caliDataLoAdr));
         var calibrationBlockSingle = new Uint8Array([...caliHead, ...dataSlice, ...caliBadFlag]);
@@ -71,13 +96,18 @@ document.addEventListener('DOMContentLoaded', function () {
         return calibrationBlockFull
     }
 
-    function patcher(caliFile, inputFile) {
+    function customPrint() {
+        console.log(`Spam incoming.... \nPathced Array is: ${arrayToFormattedHex(patchedArray)}.\nCalibration Array is: ${arrayToFormattedHex(caliArray)}.\nInput Array is: ${arrayToFormattedHex(inputArray)}.`);
+    }
+
+    function patcher() {
+
         var outputArray = new Uint8Array();
 
-        var inputTop = new Uint8Array(slicer(inputFile, fileTop));
-        var inputBottom = new Uint8Array(slicer(inputFile, fileBottom));
+        var inputTop = new Uint8Array(slicer(inputArray, fileTop));
+        var inputBottom = new Uint8Array(slicer(inputArray, fileBottom));
 
-        outputArray = [...inputTop, ...caliBuilder(caliFile), ...inputBottom];
+        outputArray = [...inputTop, ...caliBuilder(caliArray), ...inputBottom];
 
         patchedArray = outputArray;
         return outputArray
@@ -105,12 +135,12 @@ document.addEventListener('DOMContentLoaded', function () {
         var inCardName = slicer(inArray, cardNameAdr)
         
         if (isRangeBlank(inCardName)) {
-            document.getElementById(outNameID).innerText = 'No card found in save.';
+            document.getElementById(outNameID).innerText = 'No e-card found in save.';
         } else {
             document.getElementById(outNameID).innerText = enc.decode(inCardName);
         }
 
-        console.log("Card header is: '" + enc.decode(inCaliHead) + "'. ", "Expected header is: '" + enc.decode(caliHead) + "'. ")
+        console.log("Card header is: '" + arrayToFormattedHex(inCaliHead) + "'. ", "Expected header is: '" + arrayToFormattedHex(caliHead) + "'. ")
 
         // Comparing Uint8Array content
         let isValidHeader = true;
@@ -122,18 +152,20 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         if (!isValidHeader) {
-            document.getElementById(outHeaderID).innerText = 'Invalid calibration Data.';
-            document.getElementById(outDataID).innerText = '';
+            document.getElementById(outHeaderID).innerText = 'False';
+            document.getElementById(outDataID).innerText = 'Null';
         } else {
-            document.getElementById(outHeaderID).innerText = 'Calibration data looks good!';
+            document.getElementById(outHeaderID).innerText = 'True';
             document.getElementById(outDataID).innerText = arrayToFormattedHex(inCaliData);
             }
         };
 
     document.getElementById('calif').addEventListener('change', async function () {
         try {
-            var inputArray = await saveArrayBuilder(calibrationFile); // Wait for the promise to resolve
-            pageDisplay(inputArray, 'caliCardName', 'caliHeaderValid', 'caliCaliData');
+            caliArray = await saveArrayBuilder(calibrationFile); // Wait for the promise to resolve
+            pageDisplay(caliArray, 'caliCardName', 'caliHeaderValid', 'caliCaliData');
+            filesSelected['calif'] = true;
+            checkPatchButton();
         } catch (error) {
             console.error('Error occurred:', error);
         }
@@ -141,8 +173,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     document.getElementById('inputf').addEventListener('change', async function () {
         try {
-            var inputArray = await saveArrayBuilder(inputFile); // Wait for the promise to resolve
+            inputArray = await saveArrayBuilder(inputFile); // Wait for the promise to resolve
             pageDisplay(inputArray, 'inputCardName', 'inputHeaderValid', 'inputCaliData');
+            filesSelected['inputf'] = true;
+            checkPatchButton();
         } catch (error) {
             console.error('Error occurred:', error);
         }
@@ -150,21 +184,25 @@ document.addEventListener('DOMContentLoaded', function () {
 
     document.getElementById('submitButton').addEventListener('click', function () {
         namer(); // Call the namer function to update the fileName variable
+        enableDownload(); // Call enableDownload to enable/disable the download button
     });
+
 
     document.getElementById('patch').addEventListener('click', async function () {
         try {
-            var calibrationArray = await saveArrayBuilder(calibrationFile); // Wait for the promise to resolve
-            var inputArray = await saveArrayBuilder(inputFile);
-            inputArray = patcher(calibrationArray, inputArray)
+            patchedArray = patcher(caliArray, inputArray)
             pageDisplay(patchedArray, 'outputCardName', 'outputHeaderValid', 'outputOutputData')
         } catch (error) {
             console.error('Error occurred:', error);
         }
     });
 
-    document.getElementById('download').addEventListener('click', function () {
+    document.getElementById('downloadButton').addEventListener('click', function () {
         fileOut(patchedArray, fileName)
+    });
+
+    document.getElementById('customPrint').addEventListener('click', function () {
+        customPrint();
     });
 
     window.checkOutfileInput = checkOutfileInput;
