@@ -5,7 +5,7 @@
     <title>GBA e-Reader Save Patcher</title>
     <meta http-equiv="content-Type" content="text/html; charset=UTF-8" />
     <meta name="description"
-        content="A tool to copy parts of GBA e-Reader save files to others. Currently only supports copying inputbration data from one save to another." />
+        content="A tool to copy parts of GBA e-Reader save files to others. Currently only supports copying calibration data from one save to another." />
     <meta name="keywords" content="bin,sav,save,fla,patcher,online,html5,web,patch" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
     <link rel="stylesheet" href="style.css">
@@ -14,11 +14,12 @@
 
 <body>
     <header>Nintendo e-Reader Save Patcher</header>
+    <img id="logo" src="Assets/Pixel_Art_Ereader.png" alt="e-Reader Save Patcher Logo by CasualBen.">
     <div id="files" class="grid-container">
         <div id="caliFile" class="grid-item">
             <div id="caliInput">
-                <label for="calif">Calibration File:</label>
-                <input type="file" id="calif" class="inFiles" accept=".sav, .bin, .fla" single>
+                <label for="caliF">Calibration File:</label>
+                <input type="file" id="caliF" class="inFiles" accept=".sav, .bin, .fla" single>
             </div>
             <div id="caliOutput">
                 <div class="dataTitle" id="cardNameCali">Saved e-Card:</div>
@@ -31,8 +32,8 @@
         </div>
         <div id="inputFile" class="grid-item">
             <div id="inputInput">
-                <label for="inputf">Input File:</label>
-                <input type="file" id="inputf" class="inFiles" accept=".sav, .bin, .fla" single>
+                <label for="inputF">Input File:</label>
+                <input type="file" id="inputF" class="inFiles" accept=".sav, .bin, .fla" single>
             </div>
             <div id="inputOutput">
                 <div class="dataTitle" id="cardNameInput">Saved e-Card:</div>
@@ -44,6 +45,11 @@
             </div>
         </div>
         <div id="outFile" class="grid-item">
+            <div id="outputInput">
+                <label for="outputF">Output File Name:</label>
+                <input type="text" id="outputF" oninput="checkOutfileInput()">
+                <button id="submitButton" disabled>Submit</button>
+            </div>
             <div id="outputOutput">
                 <div class="dataTitle" id="cardNameOutput">Saved e-Card:</div>
                 <div class="dataValue" id="outputCardName">Press Patch.</div>
@@ -52,16 +58,10 @@
                 <div class="dataTitle" id="OutputDataoutput">Calibration Data on Save:</div>
                 <div class="dataValue" id="outputOutputData">Press Patch.</div>
             </div>
-            <div id="outputInput">
-                <label for="outf">Output File Name:</label>
-                <input type="text" id="outf" oninput="checkOutfileInput()">
-                <button id="submitButton" disabled>Submit</button>
-            </div>
         </div>
-        <div id="Temp">
+        <div id="actions">
             <button id="patch" disabled>Patch</button>
             <button id="downloadButton" disabled>Download File</button>
-            <button id="customPrint">Test</button>
         </div>
     </div>
 </body>

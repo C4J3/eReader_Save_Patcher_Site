@@ -17,13 +17,13 @@ document.addEventListener('DOMContentLoaded', function () {
     var enc = new TextDecoder("utf-8")
 
     var filesSelected = {
-        'calif': false,
-        'inputf': false
+        'caliF': false,
+        'inputF': false
     };
 
-    const calibrationFile = document.getElementById('calif');
-    const inputFile = document.getElementById('inputf');
-    const outputFile = document.getElementById('outf');
+    const calibrationFile = document.getElementById('caliF');
+    const inputFile = document.getElementById('inputF');
+    const outputFile = document.getElementById('outputF');
     const submitButton = document.getElementById('submitButton')
     const downloadButton = document.getElementById('downloadButton')
 
@@ -32,6 +32,14 @@ document.addEventListener('DOMContentLoaded', function () {
         fileName = fileNameInput.value.trim(); // Update the fileName variable
         return fileName; // Return the trimmed value of the text input
     }
+
+    function nameStripper(name) {
+		const end = name.indexOf(0);
+		if (end !== -1) {
+			name = name.slice(0, end);
+		}
+		return name;
+	}
 
     function checkOutfileInput() {
         // Check if text input is empty
@@ -80,7 +88,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function checkPatchButton() {
         const patchButton = document.getElementById('patch');
-        if (filesSelected['calif'] && filesSelected['inputf']) {
+        if (filesSelected['caliF'] && filesSelected['inputF']) {
             patchButton.disabled = false; // Enable the patch button
         } else {
             patchButton.disabled = true; // Disable the patch button
@@ -97,7 +105,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function customPrint() {
-        console.log(`Spam incoming.... \nPathced Array is: ${arrayToFormattedHex(patchedArray)}.\nCalibration Array is: ${arrayToFormattedHex(caliArray)}.\nInput Array is: ${arrayToFormattedHex(inputArray)}.`);
+        console.log(`Spam incoming.... \nPatched Array is: ${arrayToFormattedHex(patchedArray)}.\nCalibration Array is: ${arrayToFormattedHex(caliArray)}.\nInput Array is: ${arrayToFormattedHex(inputArray)}.`);
     }
 
     function patcher() {
@@ -132,7 +140,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         var inCaliHead = slicer(inArray, caliHeaderLoAdr)
         var inCaliData = slicer(inArray, caliDataLoAdr)
-        var inCardName = slicer(inArray, cardNameAdr)
+        var inCardName = nameStripper(slicer(inArray, cardNameAdr))
         
         if (isRangeBlank(inCardName)) {
             document.getElementById(outNameID).innerText = 'No e-card found in save.';
@@ -160,22 +168,22 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         };
 
-    document.getElementById('calif').addEventListener('change', async function () {
+    document.getElementById('caliF').addEventListener('change', async function () {
         try {
             caliArray = await saveArrayBuilder(calibrationFile); // Wait for the promise to resolve
             pageDisplay(caliArray, 'caliCardName', 'caliHeaderValid', 'caliCaliData');
-            filesSelected['calif'] = true;
+            filesSelected['caliF'] = true;
             checkPatchButton();
         } catch (error) {
             console.error('Error occurred:', error);
         }
     });
 
-    document.getElementById('inputf').addEventListener('change', async function () {
+    document.getElementById('inputF').addEventListener('change', async function () {
         try {
             inputArray = await saveArrayBuilder(inputFile); // Wait for the promise to resolve
             pageDisplay(inputArray, 'inputCardName', 'inputHeaderValid', 'inputCaliData');
-            filesSelected['inputf'] = true;
+            filesSelected['inputF'] = true;
             checkPatchButton();
         } catch (error) {
             console.error('Error occurred:', error);
@@ -199,10 +207,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     document.getElementById('downloadButton').addEventListener('click', function () {
         fileOut(patchedArray, fileName)
-    });
-
-    document.getElementById('customPrint').addEventListener('click', function () {
-        customPrint();
     });
 
     window.checkOutfileInput = checkOutfileInput;
