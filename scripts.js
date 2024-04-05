@@ -1,5 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
 	const cardNameAdr = [0x10004, 0x1001f];
+	const caliBlockTop = [0xd000, 0xd057];
+	const caliBlockBot = [0xe000, 0xe057];
 	const caliHeaderLoAdr = [0xd000, 0xd011];
 	const caliDataLoAdr = [0xd012, 0xd04f];
 	const caliHeaderHiAdr = [0xe000, 0xe011];
@@ -37,14 +39,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
 	function filePropertyBuilder() {
 		return {
-		fileName: undefined,
-		caliValid: undefined,
-		caliData: undefined,
-		cardValid: undefined,
-		cardName: undefined
+			fileName: undefined,
+			caliValid: undefined,
+			caliData: undefined,
+			cardValid: undefined,
+			cardName: undefined,
 		};
 	}
-	
+
 	function namer() {
 		const fileNameInput = outputFile;
 		fileName = fileNameInput.value.trim(); // Update the fileName variable
@@ -116,12 +118,19 @@ document.addEventListener("DOMContentLoaded", function () {
 	}
 
 	function savePropertiesBuilder(cali, fileName, fileProperties) {
-		var inCaliHead = slicer(cali, caliHeaderLoAdr);
-		console.log(`inCaliHead is ${inCaliHead}`);
-		var inCaliData = slicer(cali, caliDataLoAdr);
-		console.log(`inCaliData is ${inCaliData}`);
+		var topBlock = slicer(cali, caliBlockTop);
+		var botBlock = slicer(cali, caliBlockBot);
 		var inCardName = slicer(cali, cardNameAdr);
 		console.log(`inCardName is ${inCardName}`);
+
+		if (JSON.stringify(topBlock) === JSON.stringify(botBlock)) {
+			var inCaliHead = slicer(cali, caliHeaderLoAdr);
+			var inCaliData = slicer(cali, caliDataLoAdr);
+		} else {
+			fileProperties["caliValid"] = false;
+			console.log("Corrupted Save.");
+            var inCaliHead = undefined;
+		}
 
 		console.log("Beginning property building:");
 		console.log(fileProperties);
@@ -129,13 +138,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
 		// Does this set the property to false every time it checks a single item?
 		for (let i = 0; i < caliHead.length; i++) {
-			if (inCaliHead[i] !== caliHead[i]) {
-				fileProperties["caliValid"] = false;
-			} else {
-				fileProperties["caliValid"] = true;
-				fileProperties["caliData"] = inCaliData;
-			}
-		}
+            try {
+				if (inCaliHead[i] !== caliHead[i]) {
+					fileProperties["caliValid"] = false;
+				} else {
+					fileProperties["caliValid"] = true;
+					fileProperties["caliData"] = inCaliData;
+				}
+			} catch (typeError) {
+                fileProperties["caliValid"] = false;
+            } 
+        }
 
 		if (isRangeBlank(inCardName)) {
 			fileProperties["cardValid"] = false;
