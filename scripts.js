@@ -1,42 +1,41 @@
 document.addEventListener("DOMContentLoaded", function () {
+	// Create constants for where items are in save file binary.
 	const cardNameAdr = [0x10004, 0x1001f];
 	const caliBlockTop = [0xd000, 0xd057];
 	const caliBlockBot = [0xe000, 0xe057];
 	const caliHeaderLoAdr = [0xd000, 0xd011];
 	const caliDataLoAdr = [0xd012, 0xd04f];
-	const caliHeaderHiAdr = [0xe000, 0xe011];
-	const caliDataHiAdr = [0xe012, 0xe04f];
 	const fileTop = [0x0, 0xcfff];
 	const fileBottom = [0xe060, 0x20000];
+
+	// Create constants for parts of the calibration data block.
 	const caliHead = new Uint8Array([0x43, 0x61, 0x72, 0x64, 0x2d, 0x45, 0x20, 0x52, 0x65, 0x61, 0x64, 0x65, 0x72, 0x20, 0x32, 0x30, 0x30, 0x31]);
 	const caliBadFlag = new Uint8Array([0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]);
 
-	var patchedArray = new Uint8Array(null);
-	var caliArray = new Uint8Array(null);
-	var inputArray = new Uint8Array(null);
-	var enc = new TextDecoder("utf-8");
-
-	var filesSelected = {
-		caliF: false,
-		inputF: false,
-	};
-
-	var downloadValid = {
-		filesPatched: false,
-		nameSet: false,
-	};
-
-	var caliFileProperties = filePropertyBuilder();
-	var inputFileProperties = filePropertyBuilder();
-	var outputFileProperties = filePropertyBuilder();
-
+	// Get parts of the HTML and other functiony stuff because I'm lazy.
 	const calibrationFile = document.getElementById("caliF");
 	const inputFile = document.getElementById("inputF");
 	const outputFile = document.getElementById("outputF");
 	const submitButton = document.getElementById("submitButton");
-	const downloadButton = document.getElementById("downloadButton");
 	const patchButton = document.getElementById("patchButton");
+	const downloadButton = document.getElementById("downloadButton");
+	var enc = new TextDecoder("utf-8");
 
+	// Create my arrays so I can get them later.
+	var patchedArray = new Uint8Array(null);
+	var caliArray = new Uint8Array(null);
+	var inputArray = new Uint8Array(null);
+
+	// Create some objects for making sure the user can't break the sequence of how this should work.
+	var filesSelected = { caliF: false, inputF: false };
+	var downloadValid = { filesPatched: false, nameSet: false };
+
+	// Store data we want to keep hold of.
+	var caliFileProperties = filePropertyBuilder();
+	var inputFileProperties = filePropertyBuilder();
+	var outputFileProperties = filePropertyBuilder();
+
+	// Less lines of code === I'm a better programmer... right?
 	function filePropertyBuilder() {
 		return {
 			fileName: undefined,
@@ -117,7 +116,7 @@ document.addEventListener("DOMContentLoaded", function () {
 		}, true);
 	}
 
-	function savePropertiesBuilder(cali, fileName, fileProperties) {
+	function savePropertiesBuilder(cali, fileProperties, fileName = undefined) {
 		var topBlock = slicer(cali, caliBlockTop);
 		var botBlock = slicer(cali, caliBlockBot);
 		var inCardName = slicer(cali, cardNameAdr);
@@ -129,16 +128,18 @@ document.addEventListener("DOMContentLoaded", function () {
 		} else {
 			fileProperties["caliValid"] = false;
 			console.log("Corrupted Save.");
-            var inCaliHead = undefined;
+			var inCaliHead = undefined;
 		}
 
 		console.log("Beginning property building:");
 		console.log(fileProperties);
-		fileProperties["fileName"] = fileName;
+		if (fileProperties["fileName"] === undefined) {
+			fileProperties["fileName"] = fileName;
+		}
 
 		// Does this set the property to false every time it checks a single item?
 		for (let i = 0; i < caliHead.length; i++) {
-            try {
+			try {
 				if (inCaliHead[i] !== caliHead[i]) {
 					fileProperties["caliValid"] = false;
 				} else {
@@ -146,9 +147,9 @@ document.addEventListener("DOMContentLoaded", function () {
 					fileProperties["caliData"] = inCaliData;
 				}
 			} catch (typeError) {
-                fileProperties["caliValid"] = false;
-            } 
-        }
+				fileProperties["caliValid"] = false;
+			}
+		}
 
 		if (isRangeBlank(inCardName)) {
 			fileProperties["cardValid"] = false;
@@ -165,15 +166,6 @@ document.addEventListener("DOMContentLoaded", function () {
 		var calibrationBlockFull = new Uint8Array([...calibrationBlockSingle, ...blank, ...calibrationBlockSingle]);
 
 		return calibrationBlockFull;
-	}
-
-	function customPrint() {
-		console.log(
-			`Spam incoming.... \n
-			Patched Array is: ${arrayToFormattedHex(patchedArray)}.\n
-			Calibration Array is: ${arrayToFormattedHex(caliArray)}.\n
-			Input Array is: ${arrayToFormattedHex(inputArray)}.`
-		);
 	}
 
 	function patcher() {
@@ -232,12 +224,11 @@ document.addEventListener("DOMContentLoaded", function () {
 		document.getElementById(outDataID).innerText = "Load a save.";
 	}
 
-	document.getElementById("caliF").addEventListener("change", async function () {
+	calibrationFile.addEventListener("change", async function () {
 		try {
 			const { fileName, data } = await saveArrayBuilder(calibrationFile);
-			savePropertiesBuilder(data, fileName, caliFileProperties);
-			console.log(`caliFileProperties are:`);
-			console.log(caliFileProperties);
+			caliArray = data;
+			savePropertiesBuilder(data, caliFileProperties, fileName);
 			if (caliFileProperties["caliValid"]) {
 				fileVisualiser(caliFileProperties, "caliCardName", "caliHeaderValid", "caliCaliData");
 				filesSelected["caliF"] = true;
@@ -253,12 +244,11 @@ document.addEventListener("DOMContentLoaded", function () {
 		}
 	});
 
-	document.getElementById("inputF").addEventListener("change", async function () {
+	inputFile.addEventListener("change", async function () {
 		try {
 			const { fileName, data } = await saveArrayBuilder(inputFile);
-			savePropertiesBuilder(data, fileName, inputFileProperties);
-			console.log(`inputFileProperties are:`);
-			console.log(inputFileProperties);
+			inputArray = data;
+			savePropertiesBuilder(data, inputFileProperties, fileName);
 			if (inputFileProperties["cardValid"]) {
 				fileVisualiser(inputFileProperties, "inputCardName", "inputHeaderValid", "inputCaliData");
 				filesSelected["inputF"] = true;
@@ -276,16 +266,18 @@ document.addEventListener("DOMContentLoaded", function () {
 		}
 	});
 
-	document.getElementById("submitButton").addEventListener("click", function () {
+	submitButton.addEventListener("click", function () {
 		namer(); // Call the namer function to update the fileName variable
 		downloadValid["nameSet"] = true;
+		outputFileProperties["fileName"] = fileName;
 		enableDownload();
 	});
 
-	document.getElementById("patchButton").addEventListener("click", async function () {
+	patchButton.addEventListener("click", async function () {
 		try {
 			patchedArray = patcher(caliArray, inputArray);
-			fileVisualiser(patchedArray, "outputCardName", "outputHeaderValid", "outputOutputData");
+			savePropertiesBuilder(patchedArray, outputFileProperties);
+			fileVisualiser(outputFileProperties, "outputCardName", "outputHeaderValid", "outputOutputData");
 			downloadValid["filesPatched"] = true;
 			enableDownload();
 		} catch (error) {
@@ -293,7 +285,8 @@ document.addEventListener("DOMContentLoaded", function () {
 		}
 	});
 
-	document.getElementById("downloadButton").addEventListener("click", function () {
+	downloadButton.addEventListener("click", function () {
+		console.log(outputFileProperties);
 		fileOut(patchedArray, fileName);
 	});
 
