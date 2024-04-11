@@ -11,13 +11,16 @@
     <link rel="shortcut icon" type="image/x-icon" href="Assets/favicon.ico?">
     <link rel="stylesheet" href="style.css">
     <script src="scripts.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
 </head>
 
 <body>
     <header>Nintendo e-Reader Save Patcher</header>
     <img id="logo" src="Assets/Pixel_Art_Ereader.png" alt="e-Reader Save Patcher Logo by CasualBen.">
-    <div id="files" class="grid-container">
-        <div id="caliFile" class="grid-item">
+    <div id="files" class="row">
+        <div id="caliFile" class="col">
             <div id="caliInput">
                 <label for="caliF">Calibration File:</label>
                 <input type="file" id="caliF" class="inFiles" accept=".sav, .bin, .fla" single>
@@ -31,7 +34,7 @@
                 <div class="dataValue" id="caliCaliData" class="hexData">Load a save.</div>
             </div>
         </div>
-        <div id="inputFile" class="grid-item">
+        <div id="inputFile" class="col">
             <div id="inputInput">
                 <label for="inputF">Input File:</label>
                 <input type="file" id="inputF" class="inFiles" accept=".sav, .bin, .fla" single>
@@ -45,7 +48,7 @@
                 <div class="dataValue" id="inputCaliData" class="hexData">Null</div>
             </div>
         </div>
-        <div id="outFile" class="grid-item">
+        <div id="outFile" class="col">
             <div id="outputInput">
                 <label for="outputF">Output File Name:</label>
                 <input type="text" id="outputF" oninput="checkOutfileInput()">

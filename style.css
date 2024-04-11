@@ -1,44 +1,20 @@
-@import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap");
+header {
+  padding-top: 25px;
+  padding-bottom: 30px;
+  font: 3.5rem "Pixelify Sans";
+  color: aliceblue;
+  text-align: center;
+}
 
 body {
-    background-color: #232323;
+  background: #181a1b;
+  background: linear-gradient(131deg, #26262a 0%, rgb(54, 54, 60) 100%);
 }
 
 #logo {
-    max-width: 25%;
-    display: block;
-    margin: auto;
-}
-
-header {
-    font: 2rem 'Pixelify Sans';
-    color: aliceblue;
-    text-align: center;
-}
-
-label {
-    font-family: 'Pixelify Sans';
-}
-.grid-item {
-    display: inline-grid;
-    width: 30%;
-    min-width: 250px;
-    padding-left: 4px;
-    padding-right: 5px;
-    margin: 10px;
-    background-color: #424242;
-    text-align: center;
-    border: 2px solid rgb(121, 121, 121);
-}
-
-.dataValue {
-    font-family: 'Roboto Mono', monospace;
-}
-
-.dataTitle {
-    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-}
-
-#actions {
-    text-align: center;
-}
+  max-width: 25%;
+  display: block;
+  margin: auto;
+  padding-bottom: 30px;
+}/*# sourceMappingURL=style.css.map */

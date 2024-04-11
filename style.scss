@@ -1,0 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap');
+
+$Background-Grey: #181a1b;
+$Text-White: #e8e6e3;
+$Cool-Font: 'Pixelify Sans';
+
+header {
+	padding-top: 25px;
+	padding-bottom: 30px;
+	font: 3.5rem $Cool-Font;
+	color: aliceblue;
+	text-align: center;
+}
+
+body {
+    background: $Background-Grey;
+    background: linear-gradient(131deg, #26262a 0%, rgba(54, 54, 60, 1) 100%);
+}
+
+#logo {
+	max-width: 25%;
+	display: block;
+	margin: auto;
+	padding-bottom: 30px;
+}
+
+
