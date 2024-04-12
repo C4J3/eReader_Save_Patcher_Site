@@ -60,30 +60,22 @@ document.addEventListener("DOMContentLoaded", function () {
 		return name;
 	}
 
-	function checkOutfileInput() {
+	function submitTest() {
 		// Check if text input is empty
-		if (outputFile.value.trim() !== "") {
+		if (outputFile.value.trim() == "" || outputFile.value == outputFileProperties["fileName"]) {
 			// Enable the submit button
-			submitButton.disabled = false;
+			submitButton.disabled = true;
 		} else {
 			// Disable the submit button
-			submitButton.disabled = true;
+			submitButton.disabled = false;
 		}
 	}
 
-	function enableDownload() {
-		if (Object.values(downloadValid).every(Boolean)) {
-			downloadButton.disabled = false;
+	function enableButton(trackerVars, buttonName) {
+		if (Object.values(trackerVars).every(Boolean)) {
+			buttonName.disabled = false; // Enable the patch button
 		} else {
-			downloadButton.disabled = true;
-		}
-	}
-
-	function enablePatch() {
-		if (Object.values(filesSelected).every(Boolean)) {
-			patchButton.disabled = false; // Enable the patch button
-		} else {
-			patchButton.disabled = true; // Disable the patch button
+			buttonName.disabled = true; // Disable the patch button
 		}
 	}
 
@@ -116,56 +108,63 @@ document.addEventListener("DOMContentLoaded", function () {
 		}, true);
 	}
 
-	function savePropertiesBuilder(cali, fileProperties, fileName = undefined) {
-		var topBlock = slicer(cali, caliBlockTop);
-		var botBlock = slicer(cali, caliBlockBot);
-		var inCardName = slicer(cali, cardNameAdr);
-		console.log(`inCardName is ${inCardName}`);
+	function savePropertiesBuilder(bin, fileProperties, fileName = undefined) {
+
+		var topBlock = slicer(bin, caliBlockTop);
+		var botBlock = slicer(bin, caliBlockBot);
+		var inCardName = slicer(bin, cardNameAdr);
+
+		console.log(`inCardName is '${inCardName}'`);
+		console.log("Beginning property building...");
 
 		if (JSON.stringify(topBlock) === JSON.stringify(botBlock)) {
-			var inCaliHead = slicer(cali, caliHeaderLoAdr);
-			var inCaliData = slicer(cali, caliDataLoAdr);
+			var inCaliHead = slicer(bin, caliHeaderLoAdr);
+			var inCaliData = slicer(bin, caliDataLoAdr);
 		} else {
 			fileProperties["caliValid"] = false;
 			console.log("Corrupted Save.");
 			var inCaliHead = undefined;
 		}
 
-		console.log("Beginning property building:");
-		console.log(fileProperties);
 		if (fileProperties["fileName"] === undefined) {
 			fileProperties["fileName"] = fileName;
 		}
-
+		console.log("Updated fileProperties are:");
+		console.log(fileProperties);
 		// Does this set the property to false every time it checks a single item?
-		for (let i = 0; i < caliHead.length; i++) {
-			try {
-				if (inCaliHead[i] !== caliHead[i]) {
-					fileProperties["caliValid"] = false;
-				} else {
-					fileProperties["caliValid"] = true;
-					fileProperties["caliData"] = inCaliData;
-				}
-			} catch (typeError) {
+		try {
+			if (JSON.stringify(inCaliHead) === JSON.stringify(caliHead)) {
+				fileProperties["caliValid"] = true;
+				fileProperties["caliData"] = inCaliData;
+			} else {
+				console.log("Calibration header not matching what was expected.");
 				fileProperties["caliValid"] = false;
 			}
+		} catch (typeError) {
+			fileProperties["caliValid"] = false;
 		}
+
+		console.log("Updated fileProperties are:");
+		console.log(fileProperties);
 
 		if (isRangeBlank(inCardName)) {
 			fileProperties["cardValid"] = false;
 		} else {
 			fileProperties["cardValid"] = true;
-			fileProperties["cardName"] = inCardName;
+			fileProperties["cardName"] = enc.decode(nameStripper(inCardName));
 		}
+
+		console.log("Final fileProperties are:");
+		console.log(fileProperties);
 	}
 
 	function caliBuilder(caliArray) {
-		var dataSlice = new Uint8Array(slicer(caliArray, caliDataLoAdr));
-		var calibrationBlockSingle = new Uint8Array([...caliHead, ...dataSlice, ...caliBadFlag]);
-		const blank = new Uint8Array(Array(4000).fill(null));
-		var calibrationBlockFull = new Uint8Array([...calibrationBlockSingle, ...blank, ...calibrationBlockSingle]);
 
-		return calibrationBlockFull;
+		const dataSlice = new Uint8Array(slicer(caliArray, caliDataLoAdr));
+		const calibrationBlockSingle = new Uint8Array([...caliHead, ...dataSlice, ...caliBadFlag]);
+		const blank = new Uint8Array(Array(4000).fill(null));
+
+		return new Uint8Array([...calibrationBlockSingle, ...blank, ...calibrationBlockSingle]);
 	}
 
 	function patcher() {
@@ -198,13 +197,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
 	function fileVisualiser(inFileProperties, outNameID, outHeaderID, outDataID) {
 		try {
-			console.log(`Card name appears to be ${enc.decode(nameStripper(inFileProperties["cardName"]))}`);
+			console.log(`Card name appears to be ${inFileProperties["cardName"]}`);
 		} catch (typeError) {
 			console.log("Invalid card on save file.");
 		}
 
 		if (inFileProperties["cardValid"]) {
-			document.getElementById(outNameID).innerText = enc.decode(inFileProperties["cardName"]);
+			document.getElementById(outNameID).innerText = inFileProperties["cardName"];
 		} else {
 			document.getElementById(outNameID).innerText = "No e-card found in save.";
 		}
@@ -223,7 +222,7 @@ document.addEventListener("DOMContentLoaded", function () {
 		document.getElementById(outHeaderID).innerText = "Load a save.";
 		document.getElementById(outDataID).innerText = "Load a save.";
 	}
-
+	
 	calibrationFile.addEventListener("change", async function () {
 		try {
 			const { fileName, data } = await saveArrayBuilder(calibrationFile);
@@ -232,7 +231,7 @@ document.addEventListener("DOMContentLoaded", function () {
 			if (caliFileProperties["caliValid"]) {
 				fileVisualiser(caliFileProperties, "caliCardName", "caliHeaderValid", "caliCaliData");
 				filesSelected["caliF"] = true;
-				enablePatch();
+				enableButton(filesSelected, patchButton);
 			} else {
 				console.log("Invalid file. no calibration data in save.");
 				alert("Invalid calibration data in provided file. Calibration Save File must contain valid calibration data.");
@@ -252,7 +251,7 @@ document.addEventListener("DOMContentLoaded", function () {
 			if (inputFileProperties["cardValid"]) {
 				fileVisualiser(inputFileProperties, "inputCardName", "inputHeaderValid", "inputCaliData");
 				filesSelected["inputF"] = true;
-				enablePatch();
+				enableButton(filesSelected, patchButton);
 			} else {
 				// Generate alert for invalid file.
 				console.log("Invalid file. no e-card in save.");
@@ -270,7 +269,8 @@ document.addEventListener("DOMContentLoaded", function () {
 		namer(); // Call the namer function to update the fileName variable
 		downloadValid["nameSet"] = true;
 		outputFileProperties["fileName"] = fileName;
-		enableDownload();
+		enableButton(downloadValid, downloadButton);
+		submitTest();
 	});
 
 	patchButton.addEventListener("click", async function () {
@@ -279,7 +279,7 @@ document.addEventListener("DOMContentLoaded", function () {
 			savePropertiesBuilder(patchedArray, outputFileProperties);
 			fileVisualiser(outputFileProperties, "outputCardName", "outputHeaderValid", "outputOutputData");
 			downloadValid["filesPatched"] = true;
-			enableDownload();
+			enableButton(downloadValid, downloadButton);
 		} catch (error) {
 			console.error("Error occurred:", error);
 		}
@@ -290,5 +290,5 @@ document.addEventListener("DOMContentLoaded", function () {
 		fileOut(patchedArray, fileName);
 	});
 
-	window.checkOutfileInput = checkOutfileInput;
+	window.submitTest = submitTest;
 });
