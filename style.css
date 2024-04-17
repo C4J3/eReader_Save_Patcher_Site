@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap");
+@import url();
 header {
   padding-top: 25px;
   padding-bottom: 30px;
@@ -8,8 +9,20 @@ header {
 }
 
 body {
-  background: #181a1b;
   background: linear-gradient(131deg, #26262a 0%, rgb(54, 54, 60) 100%);
+}
+
+.custom-labels {
+  margin-left: 15px;
+  text-align: left;
+}
+
+#fileElements {
+  max-width: 50%;
+  margin: 0 auto;
+  border-radius: 1px;
+  border-color: aliceblue;
+  border-style: solid;
 }
 
 #logo {
